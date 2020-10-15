@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru-RU">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="html_table.css" type="text/css"/>
+        <script src="html_table.js"></script>
+    </head>
+    <body>
+        <div id="div_table">
+            <table>
+                <tr> <td>1.1</td><td>1.2</td> </tr>
+                <tr> <td>2.1</td><td>2.2</td> </tr>
+            </table>
+        </div>
+
+        <script>
+            var table = new WebTable();
+
+            table.columns.add(new WebColumn("id", "ID"));
+            table.columns.add(new WebColumn("item", "Item"));
+            table.columns.add(new WebColumn("gtin", "GTIN"));
+            table.columns.add(new WebColumn("name", "Name"));
+            table.columns.add(new WebColumn("amount", "Amount"));
+
+            let string = table.strings.add();
+
+            document.getElementById("div_table").innerHTML = table.render();
+
+        </script>
+
+    </body>
+</html>
