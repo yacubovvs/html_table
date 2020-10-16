@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru-RU">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="css/html_table.css" type="text/css"/>
+        <link rel="stylesheet" href="css/common.css" type="text/css"/>
+        <script src="js/common.js"></script>
+        <script src="js/html_table.js"></script>
+    </head>
+    <body>
+        <div id="div_table">
+        </div>
+
+        <script>
+            let table = new WebTable();
+
+            let idColumn = new WebColumn("id", "ID");
+            idColumn.orderingEnable = true;
+            idColumn.selectingEnable = true;
+            table.columns.add(idColumn);
+            let itemColumn = new WebColumn("item", "Item");
+            itemColumn.orderingEnable = true;
+            itemColumn.selectingEnable = true;
+            table.columns.add(itemColumn);
+            let gtinColumn = new WebColumn("gtin", "GTIN");
+            gtinColumn.orderingEnable = true;
+            gtinColumn.selectingEnable = true;
+            table.columns.add(gtinColumn);
+            let nameColumn = new WebColumn("name", "Name");
+            nameColumn.orderingEnable = true;
+            nameColumn.selectingEnable = true;
+            table.columns.add(nameColumn);
+            let amountColumn = new WebColumn("amount", "Amount");
+            amountColumn.orderingEnable = true;
+            amountColumn.selectingEnable = true;
+            table.columns.add(amountColumn);
+
+            let newString;
+            
+            newString = table.strings.add();
+            newString.id = 1;
+            newString.item = "The offical Raspberry Pi camera guide part 1";
+            newString.gtin = "9781912347529";
+            newString.name = "Name a";
+            newString.amount = 1;
+
+            newString = table.strings.add();
+            newString.id = 2;
+            newString.item = "The offical Raspberry Pi camera guide part 3";
+            newString.gtin = "97853912047529";
+            newString.name = "Name b";
+            newString.amount = 1001;
+
+            newString = table.strings.add();
+            newString.id = 3;
+            newString.item = "The offical Raspberry Pi camera guide part 7";
+            newString.gtin = "9781912042529";
+            newString.name = "Name d";
+            newString.amount = 141;
+
+            newString = table.strings.add();
+            newString.id = 4;
+            newString.item = "The offical Raspberry Pi camera guide part 4";
+            newString.gtin = "9781342047529";
+            newString.name = "Name a";
+            newString.amount = 233;
+
+            newString = table.strings.add();
+            newString.id = 5;
+            newString.item = "The offical Raspberry Pi camera guide part 2";
+            newString.gtin = "9781912043529";
+            newString.name = "Name h";
+            newString.amount = 15;
+        
+        
+            document.getElementById("div_table").appendChild(table.generateTable());
+
+        </script>
+
+    </body>
+</html>

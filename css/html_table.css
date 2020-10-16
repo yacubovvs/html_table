@@ -1,0 +1,53 @@
+:root{
+    --webTable-border: 1px solid black;
+}
+
+.webTable > tr > td, 
+.webTable > tr > th {
+    border-left: var(--webTable-border);
+    border-bottom: var(--webTable-border);
+    margin: 0px;
+    padding: 10px;
+    overflow: hidden;   
+}
+
+.webTable > tr > th {
+    background-color: rgb(255, 233, 159);
+}
+
+.webTable > tr {
+    background-color: white;
+}
+
+.evenRow{
+    background-color: rgb(255, 255, 234) !important;
+}
+
+.webTableOrderSelectingBtns{
+    position: absolute;
+    top: 7px;
+    right: 10px;
+    opacity: 0.3;
+}
+
+.webTableOrderSelectingBtnsSecond{
+    right: 35px;
+}
+
+
+.webTableOrderSelectingBtns:hover{
+    opacity: 0.8;
+}
+
+.webTable{
+    border-spacing: 0px;
+    border-top: var(--webTable-border);
+    border-right: var(--webTable-border);
+    table-layout: fixed;
+    width: calc(100%);
+    overflow: hidden;
+}
+
+.webTableWrapper{
+    width: 100%;
+}
