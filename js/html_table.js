@@ -60,7 +60,13 @@ function WebTable(){
             th.innerHTML = column.getTitle()
             
             if(column.orderingEnable){
-                th.innerHTML += '<svg onclick="globalTables[\'' + parent._guid + '\'].sortByColumnID(\'' + column._guid + '\')" class="webTableOrderSelectingBtns" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M21 12v-1.5L10 5.75v2.1l2.2.9v5l-2.2.9v2.1L21 12zm-7-2.62l5.02 1.87L14 13.12V9.38zM6 19.75l3-3H7V4.25H5v12.5H3l3 3z"/></svg>';
+                if(column._orderDownInUse){
+                    th.innerHTML += '<svg onclick="globalTables[\'' + parent._guid + '\'].sortByColumnID(\'' + column._guid + '\')" class="webTableOrderSelectingBtns" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M21 12v-1.5L10 5.75v2.1l2.2.9v5l-2.2.9v2.1L21 12zm-7-2.62l5.02 1.87L14 13.12V9.38zM6 19.75l3-3H7V4.25H5v12.5H3l3 3z"/></svg>';
+                } else if(column._orderUpInUse){
+                    th.innerHTML += '<svg onclick="globalTables[\'' + parent._guid + '\'].sortByColumnID(\'' + column._guid + '\')" class="webTableOrderSelectingBtns" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 12v1.5l11 4.75v-2.1l-2.2-.9v-5l2.2-.9v-2.1L3 12zm7 2.62l-5.02-1.87L10 10.88v3.74zm8-10.37l-3 3h2v12.5h2V7.25h2l-3-3z"/></svg>';
+                }else{
+                    th.innerHTML += '<svg onclick="globalTables[\'' + parent._guid + '\'].sortByColumnID(\'' + column._guid + '\')" class="webTableOrderSelectingBtns" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M21 12v-1.5L10 5.75v2.1l2.2.9v5l-2.2.9v2.1L21 12zm-7-2.62l5.02 1.87L14 13.12V9.38zM6 19.75l3-3H7V4.25H5v12.5H3l3 3z"/></svg>';
+                } 
             }
 
             if(column.selectingEnable){
@@ -122,17 +128,47 @@ function WebTable(){
         column = this.getColumnByID(columnID);
         if(!column) console.error("Column not found");
 
-        //console.log("Sorting by " + column.getName());
+        // cancel any ather sortings
+        for(let i in this.columns._list){
+            let column = this.columns._list[i];
+            if(column._guid!=columnID){
+                column._orderUpInUse = false;
+                column._orderDownInUse = false;
+            }
+        }
+
+        // apply sorting
+        if(column._orderDownInUse){
+            column._orderDownInUse = false;
+            column._orderUpInUse = true;
+        }else if(column._orderUpInUse){
+            column._orderUpInUse = false;
+            column._orderDownInUse = true;
+        }else{
+            column._orderDownInUse = true;
+        }
+
         let wrapperElement = document.getElementById(this._wrapper_guid);
         wrapperElement.innerHTML = "";
 
-        this.strings._list.sort(function (a, b) {
-            if (a[column.getName()]>b[column.getName()]){ 
-                return 1;
-            }else if (a[column.getName()]<b[column.getName()]){  
-                return -1;
-            }else return 0;
-        });
+        if(column._orderDownInUse){
+            this.strings._list.sort(function (a, b) {
+                if (a[column.getName()]>b[column.getName()]){ 
+                    return 1;
+                }else if (a[column.getName()]<b[column.getName()]){  
+                    return -1;
+                }else return 0;
+            });
+        }else{
+            this.strings._list.sort(function (a, b) {
+                if (a[column.getName()]<b[column.getName()]){ 
+                    return 1;
+                }else if (a[column.getName()]>b[column.getName()]){  
+                    return -1;
+                }else return 0;
+            });
+        }
+        
 
         wrapperElement.appendChild(this.generateTable(true));
     }
@@ -183,6 +219,9 @@ function WebColumn(name, title){
     this.orderingEnable = false;
     this.selectingEnable = false;
     this.linkEnable = false;
+
+    this._orderDownInUse = false;
+    this._orderUpInUse = false;
 }
 
 
