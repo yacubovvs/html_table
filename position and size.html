@@ -15,7 +15,13 @@
         <script>
             var table = new WebTable();
 
-            table.columns.add(new WebColumn("id", "ID"));
+            let columnID = new WebColumn("id", "ID");
+            columnID.style = {
+                width: "30px"
+            }
+            columnID.resizable = false;
+
+            table.columns.add(columnID);
             table.columns.add(new WebColumn("item", "Item"));
             table.columns.add(new WebColumn("gtin", "GTIN"));
             table.columns.add(new WebColumn("name", "Name"));

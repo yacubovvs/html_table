@@ -30,13 +30,17 @@
     opacity: 0.3;
 }
 
+.webTableOrderSelectingBtns_inuse{
+    opacity: 1.0;
+}
+
 .webTableOrderSelectingBtnsSecond{
     right: 35px;
 }
 
 
 .webTableOrderSelectingBtns:hover{
-    opacity: 0.8;
+    opacity: 0.6;
 }
 
 .webTable{
