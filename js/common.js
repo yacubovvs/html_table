@@ -5,3 +5,12 @@ function generateGUID() {
       return v.toString(16);
     });
 }
+
+function hardParseInt(value, def_value){
+  value = parseInt(value);
+  if(isNaN(value)){
+    return def_value;
+  }else{
+    return value;
+  }
+}

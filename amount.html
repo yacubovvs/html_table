@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru-RU">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="css/html_table.css" type="text/css"/>
+        <link rel="stylesheet" href="css/common.css" type="text/css"/>
+        <script src="js/common.js"></script>
+        <script src="js/html_table.js"></script>
+    </head>
+    <body>
+        <div id="div_table">
+        </div>
+
+        <script>
+            let table = new WebTable();
+
+            let idColumn = new WebColumn("id", "ID");
+            idColumn.totalCellStyle = {
+                "background-color" : "rgb(255, 250, 233)",
+                "border" : "none"
+            }
+            table.columns.add(idColumn);
+
+            let value0 = new WebColumn("value0", "Value 0");
+            value0.totalEnable = true;
+            value0.totalFixedValue = "Total:";
+            value0.totalCellStyle = {
+                "text-align" : "right"
+            }
+            table.columns.add(value0);
+
+            let value1 = new WebColumn("value1", "Value 1");
+            value1.totalEnable = true;
+            table.columns.add(value1);
+
+            let value2 = new WebColumn("value2", "Value 2");
+            value2.totalEnable = true;
+            table.columns.add(value2);
+
+            let newString;
+            
+            newString = table.strings.add();
+            newString.id = 1;
+            newString.value2 = "0";
+            newString.value1 = 2;
+            newString.value0 = "value";
+            
+            newString = table.strings.add();
+            newString.id = 2;
+            newString.value2 = 1;
+            newString.value1 = 1;
+            newString.value0 = "value";
+
+            newString = table.strings.add();
+            newString.id = 3;
+            newString.value2 = "";
+            newString.value1 = 3;
+            newString.value0 = "value";
+
+            newString = table.strings.add();
+            newString.id = 4;
+            newString.value2 = "2";
+            newString.value1 = 4;
+            newString.value0 = "value";
+
+            newString = table.strings.add();
+            newString.id = 5;
+            newString.value2 = "s";
+            newString.value1 = 2;
+            newString.value0 = "value";
+
+            newString = table.strings.add();
+            newString.id = 6;
+            newString.value2 = 9;
+            newString.value1 = 3;
+            newString.value0 = "value";
+
+            newString = table.strings.add();
+            newString.id = 7;
+            newString.value2 = "";
+            newString.value1 = 5;
+            newString.value0 = "value";
+        
+            document.getElementById("div_table").appendChild(table.generateTable());
+
+        </script>
+
+    </body>
+</html>

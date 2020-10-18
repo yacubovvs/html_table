@@ -18,22 +18,31 @@
             let idColumn = new WebColumn("id", "ID");
             idColumn.orderingEnable = true;
             idColumn.selectingEnable = true;
+            idColumn.style = {
+                width: "70px",
+                "text-align": "left"
+            };
+            idColumn.resizable = false;
+
             table.columns.add(idColumn);
             let itemColumn = new WebColumn("item", "Item");
             itemColumn.orderingEnable = true;
             itemColumn.selectingEnable = true;
+            itemColumn.style = {"padding-right" : "80px"};
             table.columns.add(itemColumn);
             let gtinColumn = new WebColumn("gtin", "GTIN");
-            gtinColumn.orderingEnable = true;
             gtinColumn.selectingEnable = true;
+            gtinColumn.style = {"padding-right" : "60px"};
             table.columns.add(gtinColumn);
             let nameColumn = new WebColumn("name", "Name");
             nameColumn.orderingEnable = true;
             nameColumn.selectingEnable = true;
+            nameColumn.style = {"padding-right" : "90px"};
             table.columns.add(nameColumn);
             let amountColumn = new WebColumn("amount", "Amount");
             amountColumn.orderingEnable = true;
             amountColumn.selectingEnable = true;
+            amountColumn.style = {"padding-right" : "100px"};
             table.columns.add(amountColumn);
 
             let newString;

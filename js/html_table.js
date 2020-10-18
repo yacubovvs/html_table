@@ -52,14 +52,22 @@ function WebTable(){
         table.id = this._guid;
         table.className = "webTable";
 
+        let tableTotalEnable = false;
+
         // Coloumns generating 
         let tr = document.createElement('tr');
 
         for(let columnNum in this.columns._list){
 
             let column = this.columns._list[columnNum];
+
+            if(column.totalEnable){
+                tableTotalEnable = true;
+                column._totalValue = 0;
+            }
+
             let th = document.createElement('th')
-            th.innerHTML = column.getTitle()
+            th.innerHTML = column.getTitle();
 
             th.id = column._guid;
             th.setAttribute("table", parent._guid);
@@ -84,8 +92,7 @@ function WebTable(){
 
             if(column.selectingEnable){
                 th.innerHTML += '<svg class="webTableOrderSelectingBtns ' + (column.orderingEnable?"webTableOrderSelectingBtnsSecond":"") + '" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24"><g><path d="M0,0h24 M24,24H0" fill="none"/><path d="M4.25,5.61C6.27,8.2,10,13,10,13v6c0,0.55,0.45,1,1,1h2c0.55,0,1-0.45,1-1v-6c0,0,3.72-4.8,5.74-7.39 C20.25,4.95,19.78,4,18.95,4H5.04C4.21,4,3.74,4.95,4.25,5.61z"/><path d="M0,0h24v24H0V0z" fill="none"/></g></svg>';
-            }
-            
+            }   
 
             tr.appendChild(th);
         } 
@@ -97,15 +104,18 @@ function WebTable(){
             let tr = document.createElement('tr');
             if(parent.evenColoring && stringNum%2==0) tr.className = "evenRow";
             table.appendChild(tr);
+
             for(let columnNum in this.columns._list){
                 let column = this.columns._list[columnNum];
                 let td = document.createElement('td');
                 td.innerHTML = string[column.getName()];
 
+                if(column.totalEnable && column.totalFixedValue==undefined){
+                    column._totalValue += hardParseInt(string[column.getName()], 0);
+                }
+
                 if(string.columnStyles[column.getName()]!=undefined){
-                    //console.log("Found column style  " + column.getName());
                     for(let style in string.columnStyles[column.getName()]){
-                        //console.log("Setting style " + style);
                         td.style[style] = string.columnStyles[column.getName()][style];
                     }
                 }
@@ -114,12 +124,35 @@ function WebTable(){
             }   
         } 
 
+        // Total
+        if(tableTotalEnable){
+            let tr_total = document.createElement('tr');
+
+            for(let columnNum in this.columns._list){
+                let column = this.columns._list[columnNum];
+                let td = document.createElement('td');
+                if(column.totalEnable){
+                    if(column.totalFixedValue==undefined) td.innerHTML = column._totalValue;
+                    else td.innerHTML = column.totalFixedValue;
+                }
+
+                td.className = "totalCell";
+                for(let style in column.totalCellStyle){
+                    td.style[style] = column.totalCellStyle[style];
+                }
+
+                tr_total.appendChild(td);
+            } 
+            table.appendChild(tr_total);
+        }
+
+        // Second title
         if(this.bottomHeader){
             let tr2 = document.createElement('tr');
             for(let columnNum in this.columns._list){
                 let column = this.columns._list[columnNum];
                 let th = document.createElement('th')
-                th.innerHTML = column.getTitle()
+                th.innerHTML = column.getTitle();
                 tr2.appendChild(th);
             } 
             table.appendChild(tr2);
@@ -248,7 +281,10 @@ function WebColumn(name, title){
     this.columnWidth = undefined;
     this.style = {};
     this.resizable = true;
-
+    this.totalEnable = false;
+    this._totalValue = 0;
+    this.totalFixedValue = undefined;
+    this.totalCellStyle = {}
 }
 
 
