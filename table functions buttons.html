@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru-RU">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="css/html_table.css" type="text/css"/>
+        <link rel="stylesheet" href="css/common.css" type="text/css"/>
+        <script src="js/common.js"></script>
+        <script src="js/html_table.js"></script>
+    </head>
+    <body>
+        <div id="div_table" onshow="console.log('change!');">
+        </div>
+
+        <script>
+            var table = new WebTable();
+            table.tableFunctionButtonsEnable = true;
+
+            table.columns.add(new WebColumn("id", "ID"));
+            table.columns.add(new WebColumn("item", "Item"));
+            table.columns.add(new WebColumn("gtin", "GTIN"));
+            table.columns.add(new WebColumn("name", "Name"));
+            table.columns.add(new WebColumn("amount", "Amount"));
+
+            for (let i=0; i<5; i++){
+                let newString = table.strings.add();
+                newString.id = i;
+                newString.item = "The offical Raspberry Pi camera guide";
+                newString.gtin = "9781912047529";
+                newString.name = "Name";
+                newString.amount = "1";
+            }
+        
+            document.getElementById("div_table").appendChild(table.generateTable());
+
+        </script>
+
+    </body>
+</html>

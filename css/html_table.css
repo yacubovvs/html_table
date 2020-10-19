@@ -64,3 +64,28 @@
 .webTableWrapper{
     width: 100%;
 }
+
+.WebTable_functionButtonsWrapper{
+    padding: 10px;
+    position: relative;
+    left: -15px;
+    padding-top: 0px;
+    
+}
+
+.WebTable_functionButtonsWrapper>.WebTable_functionButton{
+    padding: 5px;
+    margin: 5px;
+    border: 1px solid black;
+    border-radius: 5px;
+    font-size: 12px;
+    cursor: pointer;
+    background-color: rgb(253, 244, 215);
+}
+
+.WebTable_functionButtonsWrapper>.WebTable_functionButton>svg
+{
+    position: relative;
+    top: 8px;
+    width: 16px;
+}

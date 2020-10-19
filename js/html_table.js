@@ -63,7 +63,6 @@ function WebTable(){
 
             if(column.totalEnable){
                 tableTotalEnable = true;
-                column._totalValue = 0;
             }
 
             let th = document.createElement('th')
@@ -110,8 +109,30 @@ function WebTable(){
                 let td = document.createElement('td');
                 td.innerHTML = string[column.getName()];
 
-                if(column.totalEnable && column.totalFixedValue==undefined){
-                    column._totalValue += hardParseInt(string[column.getName()], 0);
+                //td.onchange = function(){ console.log("TD on change")};
+
+                if(column.isEditable){
+                    let tableObj = this;
+                    let onChangeFunction = function(){
+                        string[column.getName()] = this.innerHTML.trim();
+                        // Recounting total
+                        if(column.totalEnable && column.totalFixedValue==undefined){
+                            let countingTotalValue = tableObj.getColumnTotal(column);
+                            column.totalCell.innerHTML = countingTotalValue;
+                        }
+                            
+                    }
+
+                    td.addEventListener("input",    onChangeFunction, false);
+                    //td.addEventListener("blur",     onChangeFunction, false);
+                    //td.addEventListener("keyup",    onChangeFunction, false);
+                    //td.addEventListener("paste",    onChangeFunction, false);
+                    //td.addEventListener("cut",      onChangeFunction, false);
+                    //td.addEventListener("mouseup",  onChangeFunction, false);
+                }
+
+                if(column.isEditable){
+                    td.setAttribute("contenteditable", "true");
                 }
 
                 if(string.columnStyles[column.getName()]!=undefined){
@@ -132,8 +153,12 @@ function WebTable(){
                 let column = this.columns._list[columnNum];
                 let td = document.createElement('td');
                 if(column.totalEnable){
-                    if(column.totalFixedValue==undefined) td.innerHTML = column._totalValue;
-                    else td.innerHTML = column.totalFixedValue;
+                    if(column.totalFixedValue==undefined){
+                        // Recounting total
+                        let countingTotalValue = this.getColumnTotal(column);
+                        td.innerHTML = countingTotalValue;
+                        column.totalCell = td;
+                    }else td.innerHTML = column.totalFixedValue;
                 }
 
                 td.className = "totalCell";
@@ -160,6 +185,49 @@ function WebTable(){
         
         resizableGrid(table);
 
+        let div = document.createElement('div');
+
+        if(this.tableFunctionButtonsEnable){
+            let div_tableButtons = document.createElement('div');
+            div_tableButtons.className = "WebTable_functionButtonsWrapper";
+
+            if(this.tableFunctionButton_resize_Enable){
+                let span = document.createElement('span');
+                span.onclick = function(){
+                    //console.log(this);
+                    parent.resetColumnsSizes();
+                };
+                span.className = "WebTable_functionButton";
+                span.innerHTML = 'Reset size <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"/></svg>';
+                div_tableButtons.appendChild(span);
+            }
+
+            if(this.tableFunctionButton_exportToCSV_Enable){
+                let span = document.createElement('span');
+                span.className = "WebTable_functionButton";
+                span.innerHTML = 'To CSV <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>';
+                div_tableButtons.appendChild(span);
+            }
+
+            if(this.tableFunctionButton_exportToJSON_Enable){
+                let span = document.createElement('span');
+                span.className = "WebTable_functionButton";
+                span.innerHTML = 'To XML <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>';
+                div_tableButtons.appendChild(span);
+            }
+            
+            if(this.tableFunctionButton_exportToXML_Enable){
+                let span = document.createElement('span');
+                span.className = "WebTable_functionButton";
+                span.innerHTML = 'To JSON <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>';
+                div_tableButtons.appendChild(span);
+            }
+
+            div.appendChild(div_tableButtons);
+        }
+
+        div.appendChild(table);
+        
         // Wrapper
         if(!ignoreWrapper){
             var divWrapper = document.createElement('div');
@@ -171,10 +239,10 @@ function WebTable(){
                 divWrapper.style[i] = this.wrapperStyle[i];
             }
 
-            divWrapper.appendChild(table);
+            divWrapper.appendChild(div);
             return divWrapper;
         }else{
-            return table;
+            return div;    
         }
         
     }
@@ -228,6 +296,15 @@ function WebTable(){
         wrapperElement.appendChild(this.generateTable(true));
     }
 
+    this.getColumnTotal = function(column){
+        let countingTotalValue = 0;
+        for (let stringNum in this.strings._list){
+            let string = this.strings._list[stringNum];
+            countingTotalValue += hardParseInt(string[column.getName()], 0);
+        }
+        return countingTotalValue;
+    }
+
     this.getColumnByID = function(columnID){
         for(let i in this.columns._list){
             let column = this.columns._list[i];
@@ -238,10 +315,28 @@ function WebTable(){
         return undefined
     }
 
+    this.resetColumnsSizes = function(){
+
+        for(let columnNum in this.columns._list){
+            let column = this.columns._list[columnNum];
+            column.columnWidth = undefined;
+        }
+
+        let wrapperElement = document.getElementById(this._wrapper_guid);
+        wrapperElement.innerHTML = "";
+        wrapperElement.appendChild(this.generateTable(true));
+    }
+
     this._guid = generateGUID();
     this._wrapper_guid = generateGUID();
     this.wrapperStyle = {};
     this.evenColoring = false;
+
+    this.tableFunctionButtonsEnable = false;
+    this.tableFunctionButton_resize_Enable = true;
+    this.tableFunctionButton_exportToCSV_Enable = true;
+    this.tableFunctionButton_exportToJSON_Enable = true;
+    this.tableFunctionButton_exportToXML_Enable = true;
 
     globalWebTables[this._guid] = this;
 }
@@ -282,9 +377,10 @@ function WebColumn(name, title){
     this.style = {};
     this.resizable = true;
     this.totalEnable = false;
-    this._totalValue = 0;
     this.totalFixedValue = undefined;
     this.totalCellStyle = {}
+    this.isEditable = false;
+    this.totalCell = undefined;
 }
 
 
