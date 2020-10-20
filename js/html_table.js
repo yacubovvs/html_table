@@ -235,6 +235,16 @@ function WebTable(){
             div.appendChild(div_tableButtons);
         }
 
+        if(this.isEditable){
+            let stringEditingButtonsiv = document.createElement('div');
+
+            let stringBTN;
+
+            stringBTN = document.createElement('div');
+            div.className = "WebTable_stringEditBtn";
+            stringBTN.innerHTML = "";
+        }
+
         div.appendChild(table);
         
         // Wrapper
@@ -443,7 +453,7 @@ function WebTable(){
     this._wrapper_guid = generateGUID();
     this.wrapperStyle = {};
     this.evenColoring = false;
-
+    this.isEditable = false;
     this.tableFunctionButtonsEnable = false;
     this.tableFunctionButton_resize_Enable = true;
     this.tableFunctionButton_exportToCSV_Enable = true;
