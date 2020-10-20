@@ -74,8 +74,13 @@
 }
 
 .WebTable_functionButtonsWrapper>.WebTable_functionButton{
-    padding: 5px;
+    width: fit-content;
+    float: left;
+    padding: 10px;
     margin: 5px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    margin-bottom: 10px;
     border: 1px solid black;
     border-radius: 5px;
     font-size: 12px;
@@ -83,7 +88,16 @@
     background-color: rgb(253, 244, 215);
 }
 
-.WebTable_functionButtonsWrapper>.WebTable_functionButton>svg
+.WebTable_functionButtonsWrapper>.WebTable_functionButton:hover{
+    background-color: rgb(243, 227, 174);
+}
+
+.WebTable_functionButtonsWrapper>.WebTable_functionButton>span{
+    position: relative;
+    top: -5px;
+}
+
+.WebTable_functionButtonsWrapper>.WebTable_functionButton>span>svg
 {
     position: relative;
     top: 8px;

@@ -192,35 +192,44 @@ function WebTable(){
             div_tableButtons.className = "WebTable_functionButtonsWrapper";
 
             if(this.tableFunctionButton_resize_Enable){
-                let span = document.createElement('span');
-                span.onclick = function(){
+                let div = document.createElement('div');
+                div.onclick = function(){
                     //console.log(this);
                     parent.resetColumnsSizes();
                 };
-                span.className = "WebTable_functionButton";
-                span.innerHTML = 'Reset size <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"/></svg>';
-                div_tableButtons.appendChild(span);
+                div.className = "WebTable_functionButton";
+                div.innerHTML = '<span>Reset size <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"/></svg></span>';
+                div_tableButtons.appendChild(div);
             }
 
             if(this.tableFunctionButton_exportToCSV_Enable){
-                let span = document.createElement('span');
-                span.className = "WebTable_functionButton";
-                span.innerHTML = 'To CSV <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>';
-                div_tableButtons.appendChild(span);
+                let div = document.createElement('div');
+                div.className = "WebTable_functionButton";
+                div.innerHTML = '<span>To CSV <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg></span>';
+                div.onclick = function(){
+                    parent.showCodeDialog(parent.generate_CSV());
+                }
+                div_tableButtons.appendChild(div);
             }
 
-            if(this.tableFunctionButton_exportToJSON_Enable){
-                let span = document.createElement('span');
-                span.className = "WebTable_functionButton";
-                span.innerHTML = 'To XML <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>';
-                div_tableButtons.appendChild(span);
+            if(this.tableFunctionButton_exportToXML_Enable){
+                let div = document.createElement('div');
+                div.className = "WebTable_functionButton";
+                div.innerHTML = '<span>To XML <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg></span>';
+                div.onclick = function(){
+                    parent.showCodeDialog(parent.generate_XML());
+                }
+                div_tableButtons.appendChild(div);
             }
             
-            if(this.tableFunctionButton_exportToXML_Enable){
-                let span = document.createElement('span');
-                span.className = "WebTable_functionButton";
-                span.innerHTML = 'To JSON <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>';
-                div_tableButtons.appendChild(span);
+            if(this.tableFunctionButton_exportToJSON_Enable){
+                let div = document.createElement('div');
+                div.className = "WebTable_functionButton";
+                div.innerHTML = '<span>To JSON <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg></span>';
+                div.onclick = function(){
+                    parent.showCodeDialog(parent.generate_JSON());
+                }
+                div_tableButtons.appendChild(div);
             }
 
             div.appendChild(div_tableButtons);
@@ -325,6 +334,109 @@ function WebTable(){
         let wrapperElement = document.getElementById(this._wrapper_guid);
         wrapperElement.innerHTML = "";
         wrapperElement.appendChild(this.generateTable(true));
+    }
+
+
+    this.showCodeDialog = function(code){
+        let dialog = window.open("", "", "width=400,height=400");
+        dialog.document.write("<xmp>" + code + "</xmp>");
+    }
+
+    this.generate_CSV = function(){
+        out = '';
+
+        // Adding columns to XML
+        for(columnNum in this.columns._list){
+            let column = this.columns._list[columnNum];
+            console.log(column.getTitle());
+            out +=  (columnNum!=0?';':'') + column.getTitle();
+        }
+        out += '\n';
+
+        // Adding strings to XML
+        for(stringNum in this.strings._list){
+            let string = this.strings._list[stringNum];
+            //console.log(string);
+            for(columnNum in this.columns._list){
+                let column = this.columns._list[columnNum];
+                out +=  (columnNum!=0?';':'') + JSON.stringify(string[column.getName()]);
+            }            
+            out +=  '\n';
+        }
+        return out;
+    }
+
+    this.generate_XML = function(){
+        out = '<?xml version="1.0" encoding="UTF-8"?>';
+        out += '\n<table>';
+
+        // Adding columns to XML
+        out +=  '\n     <columns>';
+        for(columnNum in this.columns._list){
+            let column = this.columns._list[columnNum];
+            out +=  '\n         <column>';
+            out +=  '\n             <name>';
+            out +=  '\n                 ' + column.getName();
+            out +=  '\n             </name>';
+            out +=  '\n             <title>';
+            out +=  '\n                 ' + column.getTitle();
+            out +=  '\n             </title>';
+            out +=  '\n         </column>';
+        }
+        out +=  '\n     </columns>';
+
+        // Adding strings to XML
+        out +=  '\n     <strings>';
+        for(stringNum in this.strings._list){
+            let string = this.strings._list[columnNum];
+            out +=  '\n         <string>';
+            for(columnNum in this.columns._list){
+                let column = this.columns._list[columnNum];
+                //new_string[column.name] = string[column.name];
+                out +=  '\n             <' + column.getName() + '>';
+                out +=  '\n                 ' + string[column.getName()];
+                out +=  '\n             </' + column.getName() + '>';
+                
+                //console.log(string);
+            }            
+            out +=  '\n         </string>';
+        }
+        out +=  '\n     </strings>';
+
+
+        out += '\n</table>';
+        return out;
+    }
+
+    this.generate_JSON = function(){
+        let exportObject = {
+            columns: [],
+            strings: [],
+        };
+
+        // Adding columns to JSON
+        for(columnNum in this.columns._list){
+            let column = this.columns._list[columnNum];
+            exportObject.columns.push({
+                name: column.getName(),
+                title: column.getTitle(),
+            });
+        }
+
+        // Adding strings to JSON
+        for(stringNum in this.strings._list){
+            let string = this.strings._list[columnNum];
+            let new_string = {};
+            for(columnNum in exportObject.columns){
+                let column = exportObject.columns[columnNum];
+                new_string[column.name] = string[column.name];
+                //console.log(string);
+            }            
+
+            exportObject.strings.push(new_string);
+        }
+
+        return (JSON.stringify(exportObject, null, 4));
     }
 
     this._guid = generateGUID();

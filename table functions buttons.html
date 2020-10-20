@@ -15,6 +15,10 @@
         <script>
             var table = new WebTable();
             table.tableFunctionButtonsEnable = true;
+            table.tableFunctionButton_resize_Enable = true;
+            table.tableFunctionButton_exportToCSV_Enable = true;
+            table.tableFunctionButton_exportToJSON_Enable = true;
+            table.tableFunctionButton_exportToXML_Enable = true;
 
             table.columns.add(new WebColumn("id", "ID"));
             table.columns.add(new WebColumn("item", "Item"));
@@ -28,7 +32,7 @@
                 newString.item = "The offical Raspberry Pi camera guide";
                 newString.gtin = "9781912047529";
                 newString.name = "Name";
-                newString.amount = "1";
+                newString.amount = i + 10;
             }
         
             document.getElementById("div_table").appendChild(table.generateTable());
