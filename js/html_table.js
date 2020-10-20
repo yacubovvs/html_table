@@ -101,18 +101,38 @@ function WebTable(){
         for(let stringNum in this.strings._list){
             let string = this.strings._list[stringNum];
             let tr = document.createElement('tr');
+
+            tr.id=string._guid;
+
             if(parent.evenColoring && stringNum%2==0) tr.className = "evenRow";
+
+            if(this.isEditable){
+                tr.onclick = function(){
+                    let objs = document.getElementsByClassName("active_tr" + parent._guid);
+                    for(let activeObjectsNum=0; activeObjectsNum<objs.length; activeObjectsNum++){
+                        let activeObject = objs[activeObjectsNum];
+                        activeObject.classList.remove("active_tr");
+                        activeObject.classList.remove("active_tr" + parent._guid);
+                    }
+                    tr.className += "active_tr active_tr" + parent._guid;
+                }
+            }
+
             table.appendChild(tr);
 
             for(let columnNum in this.columns._list){
                 let column = this.columns._list[columnNum];
                 let td = document.createElement('td');
-                td.innerHTML = string[column.getName()];
+
+                if(!column.isCounter) td.innerHTML = string[column.getName()];
+                else td.innerHTML = (hardParseInt(stringNum, 0) + 1)
+                
 
                 //td.onchange = function(){ console.log("TD on change")};
 
                 if(column.isEditable){
                     let tableObj = this;
+                    // On edit
                     let onChangeFunction = function(){
                         string[column.getName()] = this.innerHTML.trim();
                         // Recounting total
@@ -194,7 +214,6 @@ function WebTable(){
             if(this.tableFunctionButton_resize_Enable){
                 let div = document.createElement('div');
                 div.onclick = function(){
-                    //console.log(this);
                     parent.resetColumnsSizes();
                 };
                 div.className = "WebTable_functionButton";
@@ -236,13 +255,57 @@ function WebTable(){
         }
 
         if(this.isEditable){
-            let stringEditingButtonsiv = document.createElement('div');
+            let stringEditingButtonDiv = document.createElement('div');
+            stringEditingButtonDiv.className = "WebTable_stringEditBtnsWrapper";
 
             let stringBTN;
+            
 
+            // New string
             stringBTN = document.createElement('div');
-            div.className = "WebTable_stringEditBtn";
-            stringBTN.innerHTML = "";
+            stringBTN.className = "WebTable_stringEditBtn";
+            stringBTN.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>';
+            stringBTN.onclick = function(){
+                parent.strings.add();
+                let wrapperElement = document.getElementById(parent._wrapper_guid);
+                wrapperElement.innerHTML = "";
+                wrapperElement.appendChild(parent.generateTable(true));
+                //parent.generateTable
+            }
+            stringEditingButtonDiv.appendChild(stringBTN);
+
+            // Remove string
+            stringBTN = document.createElement('div');
+            stringBTN.className = "WebTable_stringEditBtn";
+            stringBTN.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M0 0h24v24H0V0z" fill="none"/><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z"/></svg>';
+            stringBTN.onclick = function(){
+                parent.removeActiveString();
+                let wrapperElement = document.getElementById(parent._wrapper_guid);
+                wrapperElement.innerHTML = "";
+                wrapperElement.appendChild(parent.generateTable(true));
+                //parent.generateTable
+            }
+            stringEditingButtonDiv.appendChild(stringBTN);
+
+            // Move string up
+            stringBTN = document.createElement('div');
+            stringBTN.className = "WebTable_stringEditBtn";
+            stringBTN.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>';
+            stringEditingButtonDiv.appendChild(stringBTN);
+
+            // Move string down
+            stringBTN = document.createElement('div');
+            stringBTN.className = "WebTable_stringEditBtn";
+            stringBTN.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>';
+            stringEditingButtonDiv.appendChild(stringBTN);
+
+            // Dublicate string
+            stringBTN = document.createElement('div');
+            stringBTN.className = "WebTable_stringEditBtn";
+            stringBTN.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>';
+            stringEditingButtonDiv.appendChild(stringBTN);
+
+            div.appendChild(stringEditingButtonDiv);
         }
 
         div.appendChild(table);
@@ -311,7 +374,6 @@ function WebTable(){
             });
         }
         
-
         wrapperElement.appendChild(this.generateTable(true));
     }
 
@@ -374,6 +436,22 @@ function WebTable(){
             out +=  '\n';
         }
         return out;
+    }
+
+    this.removeActiveString = function(){
+        let objs = document.getElementsByClassName("active_tr" + parent._guid);
+        for(let activeObjectsNum=0; activeObjectsNum<objs.length; activeObjectsNum++){
+            let activeObject = objs[activeObjectsNum];
+            //console.log("removing " + this.string._list.id);
+
+            for(let stringNum in this.strings._list){
+                let stringSearch = this.strings._list[stringNum];
+                if(stringSearch._guid==activeObject.id){
+                    this.strings._list.splice(stringNum,1);
+                    console.log("Slicing " + stringNum);
+                }
+            }
+        }
     }
 
     this.generate_XML = function(){
@@ -491,6 +569,7 @@ function WebColumn(name, title){
     this.orderingEnable = false;
     this.selectingEnable = false;
     this.linkEnable = false;
+    this.isCounter = false;
 
     this._orderDownInUse = false;
     this._orderUpInUse = false;
@@ -508,8 +587,9 @@ function WebColumn(name, title){
 
 // Object string
 function WebTableString(columns){
-    if(new.target==undefined) return new WebColumn(columns);
+    if(new.target==undefined) return new WebTableString(columns);
     this.columnStyles = {};
+    this._guid = generateGUID();
 }
 
 // Table resizing

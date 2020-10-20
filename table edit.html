@@ -14,26 +14,31 @@
 
         <script>
             var table = new WebTable();
+            table.isEditable = true;
 
             idColumn = new WebColumn("id", "ID");
+            idColumn.isCounter = true;
+            idColumn.style = {width: "30px"};
             table.columns.add(idColumn);
             itemColumn = new WebColumn("item", "Item")
             itemColumn.isEditable = true;
             table.columns.add(itemColumn);
             gtinColumn = new WebColumn("gtin", "GTIN")
+            gtinColumn.style = {width: "150px"};
             gtinColumn.isEditable = true;
             table.columns.add(gtinColumn);
             nameColumn = new WebColumn("name", "Name")
+            nameColumn.style = {width: "150px"};
             nameColumn.isEditable = true;
             table.columns.add(nameColumn);
             amountColumn = new WebColumn("amount", "Amount");
+            amountColumn.style = {width: "50px"};
             amountColumn.isEditable = true;
             table.columns.add(amountColumn);
 
             for (let i=0; i<5; i++){
                 let newString = table.strings.add();
-                newString.id = i;
-                newString.item = "The offical Raspberry Pi camera guide";
+                newString.item = "The official Raspberry Pi camera guide";
                 newString.gtin = "9781912047529";
                 newString.name = "Name";
                 newString.amount = "1";
