@@ -14,8 +14,12 @@
 
         <script>
             let table = new WebTable();
+            table.isEditable = true;
+
 
             let idColumn = new WebColumn("id", "ID");
+            idColumn.style = {width: "50px"};
+            idColumn.isCounter = true;
             idColumn.totalCellStyle = {
                 "background-color" : "rgb(255, 250, 233)",
                 "border" : "none"
@@ -23,6 +27,7 @@
             table.columns.add(idColumn);
 
             let value0 = new WebColumn("value0", "Value 0");
+            value0.isEditable = true;
             value0.totalEnable = true;
             value0.totalFixedValue = "Total:";
             value0.totalCellStyle = {
@@ -36,6 +41,7 @@
             table.columns.add(value1);
 
             let value2 = new WebColumn("value2", "Value 2");
+            value2.isEditable = true;
             value2.totalEnable = true;
             table.columns.add(value2);
 
