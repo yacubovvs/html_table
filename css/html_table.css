@@ -12,7 +12,9 @@
 }
 
 .webTable > tr > th {
+    overflow: visible;
     background-color: rgb(255, 233, 159);
+    
 }
 
 .webTable > tr > .totalCell {
@@ -109,7 +111,10 @@
 }
 
 .WebTable_stringEditBtnsWrapper{
-
+    padding: 10px;
+    position: relative;
+    left: -15px;
+    padding-top: 0px;
 }
 
 .WebTable_stringEditBtnsWrapper>.WebTable_stringEditBtn{
@@ -136,4 +141,64 @@
 {
     position: relative;
     top: 4px;
+}
+
+
+/*
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+                FILTER POPUP
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+*/
+
+:root{
+    --var_filter_form_width: 170px;
+}
+
+.WebTable-filter_poup{
+    background-color: white;
+    position: absolute;
+    z-index: 100000;
+    right: 10px;
+    width: var(--var_filter_form_width);
+    border-radius: 4px;
+    box-shadow: 0 0 10px black;
+    text-align: left;
+    padding: 20px 10px;
+}
+
+.WebTable-filter_poup-value{
+    padding: 5px;
+    border: solid 1px rgb(114, 114, 114);
+    margin-top: 10px;
+    border-radius: 3px;
+    
+}
+
+.WebTable-filter_poup-btn-ok{
+    /* background-color: rgb(78, 204, 78); */
+    border: solid 2px rgb(78, 204, 78); 
+    float: left;
+}
+
+.WebTable-filter_poup-btn-ok:hover{
+    background-color: rgba(78, 204, 78, 0.5);
+}
+
+.WebTable-filter_poup-btn-cancel{
+    /* background-color: rgb(202, 75, 75); */
+    border: solid 2px rgb(202, 75, 75);
+    float: right;
+}
+
+.WebTable-filter_poup-btn-cancel:hover{
+    background-color: rgba(202, 75, 75, 0.5);
+}
+
+.WebTable-filter_poup-btn{
+    width: calc(var(--var_filter_form_width)/2 - 8px);
+    padding: 10px 0;
+    margin-top: 15px;
+    text-align: center;
+    border-radius: 3px;
+    cursor: pointer;
 }

@@ -79,7 +79,7 @@ function WebTable(){
                 th.style.width = column.columnWidth + "px";
             }
 
-            if(column.orderingEnable){
+            if(column.sorteringEnable){
                 if(column._orderDownInUse){
                     th.innerHTML += '<svg onclick="globalWebTables[\'' + parent._guid + '\'].sortByColumnID(\'' + column._guid + '\')" class="webTableOrderSelectingBtns webTableOrderSelectingBtns_inuse" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M21 12v-1.5L10 5.75v2.1l2.2.9v5l-2.2.9v2.1L21 12zm-7-2.62l5.02 1.87L14 13.12V9.38zM6 19.75l3-3H7V4.25H5v12.5H3l3 3z"/></svg>';
                 } else if(column._orderUpInUse){
@@ -89,8 +89,32 @@ function WebTable(){
                 } 
             }
 
-            if(column.selectingEnable){
-                th.innerHTML += '<svg class="webTableOrderSelectingBtns ' + (column.orderingEnable?"webTableOrderSelectingBtnsSecond":"") + '" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24"><g><path d="M0,0h24 M24,24H0" fill="none"/><path d="M4.25,5.61C6.27,8.2,10,13,10,13v6c0,0.55,0.45,1,1,1h2c0.55,0,1-0.45,1-1v-6c0,0,3.72-4.8,5.74-7.39 C20.25,4.95,19.78,4,18.95,4H5.04C4.21,4,3.74,4.95,4.25,5.61z"/><path d="M0,0h24v24H0V0z" fill="none"/></g></svg>';
+            if(column.filteringEnable){
+                th.innerHTML += '<svg class="webTableOrderSelectingBtns ' + (column.sorteringEnable?"webTableOrderSelectingBtnsSecond":"") + '" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24"><g><path d="M0,0h24 M24,24H0" fill="none"/><path d="M4.25,5.61C6.27,8.2,10,13,10,13v6c0,0.55,0.45,1,1,1h2c0.55,0,1-0.45,1-1v-6c0,0,3.72-4.8,5.74-7.39 C20.25,4.95,19.78,4,18.95,4H5.04C4.21,4,3.74,4.95,4.25,5.61z"/><path d="M0,0h24v24H0V0z" fill="none"/></g></svg>';
+                
+                div_filtering = document.createElement('div');
+                div_filtering.className = "WebTable-filter_poup"
+                
+                div_filtering_span = document.createElement('span');
+                div_filtering_span.innerHTML = "Filter:";
+                div_filtering_value = document.createElement('div');
+                div_filtering_value.className = "WebTable-filter_poup-value"
+                div_filtering_value.innerHTML = "12"
+                div_filtering_value.setAttribute("contenteditable", "true");
+                div_filtering_btn_ok = document.createElement('div');
+                div_filtering_btn_ok.className = "WebTable-filter_poup-btn WebTable-filter_poup-btn-ok"
+                div_filtering_btn_ok.innerHTML = "OK"
+                div_filtering_btn_clear = document.createElement('div');
+                div_filtering_btn_clear.className = "WebTable-filter_poup-btn WebTable-filter_poup-btn-cancel"
+                div_filtering_btn_clear.innerHTML = "Cancel"
+
+                div_filtering.appendChild(div_filtering_span);
+                div_filtering.appendChild(div_filtering_value);
+                div_filtering.appendChild(div_filtering_btn_ok);
+                div_filtering.appendChild(div_filtering_btn_clear);
+                div_filtering.appendChild(createClearBothBtn());
+
+                th.appendChild(div_filtering);
             }   
 
             tr.appendChild(th);
@@ -98,6 +122,8 @@ function WebTable(){
         table.appendChild(tr);
         
         // String generating 
+        if(this.isEditable) if(this.currentActiveString<0 || this.currentActiveString>this.strings._list.length-1) this.currentActiveString = undefined;
+
         for(let stringNum in this.strings._list){
             let string = this.strings._list[stringNum];
             let tr = document.createElement('tr');
@@ -115,7 +141,10 @@ function WebTable(){
                         activeObject.classList.remove("active_tr" + parent._guid);
                     }
                     tr.className += "active_tr active_tr" + parent._guid;
+                    parent.currentActiveString = parent.getCurrentActiveStringNum();
                 }
+
+                if(this.currentActiveString==stringNum) tr.className += "active_tr active_tr" + parent._guid;
             }
 
             table.appendChild(tr);
@@ -252,6 +281,8 @@ function WebTable(){
             }
 
             div.appendChild(div_tableButtons);
+
+            div.appendChild(createClearBothBtn());
         }
 
         if(this.isEditable){
@@ -267,10 +298,8 @@ function WebTable(){
             stringBTN.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>';
             stringBTN.onclick = function(){
                 parent.strings.add();
-                let wrapperElement = document.getElementById(parent._wrapper_guid);
-                wrapperElement.innerHTML = "";
-                wrapperElement.appendChild(parent.generateTable(true));
-                //parent.generateTable
+                parent.currentActiveString = parent.strings._list.length-1;
+                parent.redrawTable();
             }
             stringEditingButtonDiv.appendChild(stringBTN);
 
@@ -280,10 +309,7 @@ function WebTable(){
             stringBTN.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M0 0h24v24H0V0z" fill="none"/><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z"/></svg>';
             stringBTN.onclick = function(){
                 parent.removeActiveString();
-                let wrapperElement = document.getElementById(parent._wrapper_guid);
-                wrapperElement.innerHTML = "";
-                wrapperElement.appendChild(parent.generateTable(true));
-                //parent.generateTable
+                parent.redrawTable();
             }
             stringEditingButtonDiv.appendChild(stringBTN);
 
@@ -291,21 +317,34 @@ function WebTable(){
             stringBTN = document.createElement('div');
             stringBTN.className = "WebTable_stringEditBtn";
             stringBTN.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>';
+            stringBTN.onclick = function(){
+                parent.moveActiveStringUp();
+                parent.redrawTable();
+            }
             stringEditingButtonDiv.appendChild(stringBTN);
 
             // Move string down
             stringBTN = document.createElement('div');
             stringBTN.className = "WebTable_stringEditBtn";
             stringBTN.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg>';
+            stringBTN.onclick = function(){
+                parent.moveActiveStringDown();
+                parent.redrawTable();
+            }
             stringEditingButtonDiv.appendChild(stringBTN);
 
             // Dublicate string
             stringBTN = document.createElement('div');
             stringBTN.className = "WebTable_stringEditBtn";
             stringBTN.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>';
+            stringBTN.onclick = function(){
+                parent.dublicateActiveString();
+                parent.redrawTable();
+            }
             stringEditingButtonDiv.appendChild(stringBTN);
 
             div.appendChild(stringEditingButtonDiv);
+            div.appendChild(createClearBothBtn());
         }
 
         div.appendChild(table);
@@ -353,9 +392,6 @@ function WebTable(){
             column._orderDownInUse = true;
         }
 
-        let wrapperElement = document.getElementById(this._wrapper_guid);
-        wrapperElement.innerHTML = "";
-
         if(column._orderDownInUse){
             this.strings._list.sort(function (a, b) {
                 if (a[column.getName()]>b[column.getName()]){ 
@@ -373,8 +409,8 @@ function WebTable(){
                 }else return 0;
             });
         }
-        
-        wrapperElement.appendChild(this.generateTable(true));
+
+        this.redrawTable();
     }
 
     this.getColumnTotal = function(column){
@@ -403,9 +439,7 @@ function WebTable(){
             column.columnWidth = undefined;
         }
 
-        let wrapperElement = document.getElementById(this._wrapper_guid);
-        wrapperElement.innerHTML = "";
-        wrapperElement.appendChild(this.generateTable(true));
+        this.redrawTable();
     }
 
 
@@ -438,20 +472,64 @@ function WebTable(){
         return out;
     }
 
+    this.redrawTable = function(){
+        let wrapperElement = document.getElementById(this._wrapper_guid);
+        wrapperElement.innerHTML = "";
+        wrapperElement.appendChild(this.generateTable(true));
+    }
+
+    this.moveActiveStringUp = function(){
+        if(this.currentActiveString==undefined) return;
+        if(this.currentActiveString==0) return;
+        let stringSearch = this.strings._list[this.currentActiveString];
+
+        this.strings._list[this.currentActiveString] = this.strings._list[(this.currentActiveString) - 1];
+        this.strings._list[(this.currentActiveString) -1] = stringSearch;
+        this.currentActiveString--;
+    }
+
+    this.moveActiveStringDown = function(){
+        if(this.currentActiveString==undefined) return;
+        if(this.currentActiveString>=this.strings._list.length-1) return;
+        let stringSearch = this.strings._list[this.currentActiveString];
+
+        this.strings._list[this.currentActiveString] = this.strings._list[(this.currentActiveString) + 1];
+        this.strings._list[(this.currentActiveString) + 1] = stringSearch;
+        this.currentActiveString++;
+    }
+
     this.removeActiveString = function(){
+        if(this.currentActiveString==undefined) return;
+        this.strings._list.splice(this.currentActiveString,1);
+
+        this.currentActiveString = undefined;
+    }
+
+    this.dublicateActiveString = function(){
+        if(this.currentActiveString==undefined) return;
+        let stringSearch = this.strings._list[this.currentActiveString];
+
+        let string = this.strings.add();
+        for(columnNum in this.columns._list){
+            let column = this.columns._list[columnNum];
+            string[column.getName()] = stringSearch[column.getName()];
+        }  
+        
+        this.currentActiveString = this.strings._list.length-1;
+    }
+
+    this.getCurrentActiveStringNum = function(){
         let objs = document.getElementsByClassName("active_tr" + parent._guid);
         for(let activeObjectsNum=0; activeObjectsNum<objs.length; activeObjectsNum++){
             let activeObject = objs[activeObjectsNum];
-            //console.log("removing " + this.string._list.id);
-
             for(let stringNum in this.strings._list){
                 let stringSearch = this.strings._list[stringNum];
                 if(stringSearch._guid==activeObject.id){
-                    this.strings._list.splice(stringNum,1);
-                    console.log("Slicing " + stringNum);
+                    return hardParseInt(stringNum, undefined);
                 }
             }
         }
+        return undefined;
     }
 
     this.generate_XML = function(){
@@ -537,6 +615,7 @@ function WebTable(){
     this.tableFunctionButton_exportToCSV_Enable = true;
     this.tableFunctionButton_exportToJSON_Enable = true;
     this.tableFunctionButton_exportToXML_Enable = true;
+    this.currentActiveString = undefined;
 
     globalWebTables[this._guid] = this;
 }
@@ -566,8 +645,8 @@ function WebColumn(name, title){
     this.setName(name);
     this.setTitle(title);
     this._guid = generateGUID();
-    this.orderingEnable = false;
-    this.selectingEnable = false;
+    this.sorteringEnable = false;
+    this.filteringEnable = false;
     this.linkEnable = false;
     this.isCounter = false;
 
@@ -697,3 +776,9 @@ function resizableGrid(table) {
         return (window.getComputedStyle(elm, null).getPropertyValue(css))
     }
 };
+
+function createClearBothBtn(){
+    let clearDiv = document.createElement('div');
+    clearDiv.style.clear = "both";
+    return clearDiv;
+}

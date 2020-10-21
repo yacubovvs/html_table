@@ -16,8 +16,7 @@
             let table = new WebTable();
 
             let idColumn = new WebColumn("id", "ID");
-            idColumn.orderingEnable = true;
-            idColumn.selectingEnable = true;
+            idColumn.isCounter = true;
             idColumn.style = {
                 width: "70px",
                 "text-align": "left"
@@ -26,57 +25,52 @@
 
             table.columns.add(idColumn);
             let itemColumn = new WebColumn("item", "Item");
-            itemColumn.orderingEnable = true;
-            itemColumn.selectingEnable = true;
+            itemColumn.sorteringEnable = true;
+            itemColumn.filteringEnable = true;
             itemColumn.style = {"padding-right" : "80px"};
             table.columns.add(itemColumn);
             let gtinColumn = new WebColumn("gtin", "GTIN");
-            gtinColumn.selectingEnable = true;
+            gtinColumn.filteringEnable = true;
             gtinColumn.style = {"padding-right" : "60px"};
             table.columns.add(gtinColumn);
             let nameColumn = new WebColumn("name", "Name");
-            nameColumn.orderingEnable = true;
-            nameColumn.selectingEnable = true;
+            nameColumn.sorteringEnable = true;
+            nameColumn.filteringEnable = true;
             nameColumn.style = {"padding-right" : "90px"};
             table.columns.add(nameColumn);
             let amountColumn = new WebColumn("amount", "Amount");
-            amountColumn.orderingEnable = true;
-            amountColumn.selectingEnable = true;
+            amountColumn.sorteringEnable = true;
+            amountColumn.filteringEnable = true;
             amountColumn.style = {"padding-right" : "100px"};
             table.columns.add(amountColumn);
 
             let newString;
             
             newString = table.strings.add();
-            newString.id = 1;
             newString.item = "The official Raspberry Pi camera guide part 1";
             newString.gtin = "9781912347529";
             newString.name = "Name a";
             newString.amount = 1;
 
             newString = table.strings.add();
-            newString.id = 2;
             newString.item = "The official Raspberry Pi camera guide part 3";
             newString.gtin = "97853912047529";
             newString.name = "Name b";
             newString.amount = 1001;
 
             newString = table.strings.add();
-            newString.id = 3;
             newString.item = "The official Raspberry Pi camera guide part 7";
             newString.gtin = "9781912042529";
             newString.name = "Name d";
             newString.amount = 141;
 
             newString = table.strings.add();
-            newString.id = 4;
             newString.item = "The official Raspberry Pi camera guide part 4";
             newString.gtin = "9781342047529";
             newString.name = "Name a";
             newString.amount = 233;
 
             newString = table.strings.add();
-            newString.id = 5;
             newString.item = "The official Raspberry Pi camera guide part 2";
             newString.gtin = "9781912043529";
             newString.name = "Name h";
