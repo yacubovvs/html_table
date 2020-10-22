@@ -64,7 +64,6 @@
     border-right: var(--webTable-border);
     table-layout: fixed;
     width: calc(100%);
-    overflow: hidden;
 }
 
 .webTableWrapper{
@@ -157,7 +156,6 @@
 .WebTable-filter_poup{
     background-color: white;
     position: absolute;
-    z-index: 100000;
     right: 10px;
     width: var(--var_filter_form_width);
     border-radius: 4px;

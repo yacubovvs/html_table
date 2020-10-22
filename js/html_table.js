@@ -1,3 +1,4 @@
+var popup_z_index_value = 10000;
 var globalWebTables = {};
 // Object table
 function WebTable(){
@@ -92,21 +93,39 @@ function WebTable(){
             if(column.filteringEnable){
                 th.innerHTML += '<svg class="webTableOrderSelectingBtns ' + (column.sorteringEnable?"webTableOrderSelectingBtnsSecond":"") + '" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24"><g><path d="M0,0h24 M24,24H0" fill="none"/><path d="M4.25,5.61C6.27,8.2,10,13,10,13v6c0,0.55,0.45,1,1,1h2c0.55,0,1-0.45,1-1v-6c0,0,3.72-4.8,5.74-7.39 C20.25,4.95,19.78,4,18.95,4H5.04C4.21,4,3.74,4.95,4.25,5.61z"/><path d="M0,0h24v24H0V0z" fill="none"/></g></svg>';
                 
-                div_filtering = document.createElement('div');
+                let div_filtering = document.createElement('div');
+                div_filtering.id = "popup_filter_" + column._guid;
+                //div_filtering.style['z-index'] = popup_z_index_value;
                 div_filtering.className = "WebTable-filter_poup"
                 
-                div_filtering_span = document.createElement('span');
+                let div_filtering_span = document.createElement('span');
                 div_filtering_span.innerHTML = "Filter:";
-                div_filtering_value = document.createElement('div');
-                div_filtering_value.className = "WebTable-filter_poup-value"
-                div_filtering_value.innerHTML = "12"
+                let div_filtering_value = document.createElement('div');
+                div_filtering_value.className = "WebTable-filter_poup-value";
+                div_filtering_value.innerHTML = (column.filterValue==undefined?"":column.filterValue);
                 div_filtering_value.setAttribute("contenteditable", "true");
-                div_filtering_btn_ok = document.createElement('div');
-                div_filtering_btn_ok.className = "WebTable-filter_poup-btn WebTable-filter_poup-btn-ok"
-                div_filtering_btn_ok.innerHTML = "OK"
-                div_filtering_btn_clear = document.createElement('div');
-                div_filtering_btn_clear.className = "WebTable-filter_poup-btn WebTable-filter_poup-btn-cancel"
-                div_filtering_btn_clear.innerHTML = "Cancel"
+                let div_filtering_btn_ok = document.createElement('div');
+                div_filtering_btn_ok.className = "WebTable-filter_poup-btn WebTable-filter_poup-btn-ok";
+                div_filtering_btn_ok.innerHTML = "OK";
+                let div_filtering_btn_clear = document.createElement('div');
+                div_filtering_btn_clear.className = "WebTable-filter_poup-btn WebTable-filter_poup-btn-cancel";
+                div_filtering_btn_clear.innerHTML = "Cancel";
+
+                div_filtering_btn_ok.onclick = function(){
+                    column.isFilterOn = true;
+                    column.filterValue = div_filtering_value.innerHTML;
+                    if(column.filterValue=="") column.isFilterOn = false;
+                    //console.log(div_filtering_value);
+                    parent.redrawTable();
+                }
+
+                div_filtering_btn_clear.onclick = function(){
+                    column.isFilterOn = false;
+                    parent.redrawTable();
+                }
+
+                //this.isFilterOn = false;
+                //this.filterValue = undefined;
 
                 div_filtering.appendChild(div_filtering_span);
                 div_filtering.appendChild(div_filtering_value);
@@ -126,6 +145,9 @@ function WebTable(){
 
         for(let stringNum in this.strings._list){
             let string = this.strings._list[stringNum];
+
+            if(!string.isVisible) continue;
+
             let tr = document.createElement('tr');
 
             tr.id=string._guid;
@@ -147,10 +169,21 @@ function WebTable(){
                 if(this.currentActiveString==stringNum) tr.className += "active_tr active_tr" + parent._guid;
             }
 
-            table.appendChild(tr);
-
+            
+            let breakingByFilter = false;
             for(let columnNum in this.columns._list){
                 let column = this.columns._list[columnNum];
+
+                // CHECK FILTERING
+                if(column.filteringEnable && column.isFilterOn){
+                    if(!column.checkValueByFilter(string[column.getName()])){
+                        breakingByFilter = true;
+                        continue;
+                    }
+                }
+                //column.isFilterOn = true; //filteringEnable
+                //column.filterValue = div_filtering_value.innerHTML;
+
                 let td = document.createElement('td');
 
                 if(!column.isCounter) td.innerHTML = string[column.getName()];
@@ -192,7 +225,12 @@ function WebTable(){
 
                 tr.appendChild(td);
             }   
+
+            if(breakingByFilter) continue; // Hiding by filter
+
+            table.appendChild(tr);
         } 
+        
 
         // Total
         if(tableTotalEnable){
@@ -661,6 +699,22 @@ function WebColumn(name, title){
     this.totalCellStyle = {}
     this.isEditable = false;
     this.totalCell = undefined;
+
+    this.isFilterOn = false;
+    this.filterValue = undefined;
+
+    this.checkValueByFilter = function(value){
+        if(this.filterValue==undefined) return true;
+        if(this.filterValue=="") return true;
+        console.log("checkValueByFilter #" + value + "# - #" + this.filterValue + "#");
+
+        // Check including
+        if(String(value).search(this.filterValue)==-1){
+            return false;
+        }
+
+        return true;
+    }
 }
 
 
@@ -669,6 +723,7 @@ function WebTableString(columns){
     if(new.target==undefined) return new WebTableString(columns);
     this.columnStyles = {};
     this._guid = generateGUID();
+    this.isVisible = true;
 }
 
 // Table resizing
@@ -677,7 +732,7 @@ function resizableGrid(table) {
     cols = row ? row.children : undefined;
     if (!cols) return;
 
-    table.style.overflow = 'hidden';
+    //table.style.overflow = 'hidden';
 
     var tableHeight = table.offsetHeight;
 
