@@ -91,7 +91,7 @@ function WebTable(){
             }
 
             if(column.filteringEnable){
-                th.innerHTML += '<svg onclick="openPopupFilter(\'' + column._guid + '\')" class="webTableOrderSelectingBtns ' + (column.sorteringEnable?"webTableOrderSelectingBtnsSecond":"") + '" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24"><g><path d="M0,0h24 M24,24H0" fill="none"/><path d="M4.25,5.61C6.27,8.2,10,13,10,13v6c0,0.55,0.45,1,1,1h2c0.55,0,1-0.45,1-1v-6c0,0,3.72-4.8,5.74-7.39 C20.25,4.95,19.78,4,18.95,4H5.04C4.21,4,3.74,4.95,4.25,5.61z"/><path d="M0,0h24v24H0V0z" fill="none"/></g></svg>';
+                th.innerHTML += '<svg onclick="openPopupFilter(\'' + column._guid + '\')" class="webTableOrderSelectingBtns ' + (column.sorteringEnable?"webTableOrderSelectingBtnsSecond":"") +  (column.isFilterOn?" webTableOrderSelectingBtns_inuse":"") + '" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24" viewBox="0 0 24 24" width="24"><g><path d="M0,0h24 M24,24H0" fill="none"/><path d="M4.25,5.61C6.27,8.2,10,13,10,13v6c0,0.55,0.45,1,1,1h2c0.55,0,1-0.45,1-1v-6c0,0,3.72-4.8,5.74-7.39 C20.25,4.95,19.78,4,18.95,4H5.04C4.21,4,3.74,4.95,4.25,5.61z"/><path d="M0,0h24v24H0V0z" fill="none"/></g></svg>';
                 
                 let div_filtering = document.createElement('div');
                 div_filtering.id = "popup_filter_" + column._guid;
@@ -114,7 +114,7 @@ function WebTable(){
 
                 div_filtering_btn_ok.onclick = function(){
                     column.isFilterOn = true;
-                    column.filterValue = div_filtering_value.innerHTML;
+                    column.filterValue = div_filtering_value.textContent;
                     if(column.filterValue=="") column.isFilterOn = false;
                     //console.log(div_filtering_value);
                     parent.redrawTable();
@@ -660,7 +660,7 @@ function WebTable(){
 }
 
 function openPopupFilter(column_id){
-    console.log("ColumnID " + column_id);
+    //console.log("ColumnID " + column_id);
     for(let popupNum in PopupArray){
         let popup = PopupArray[popupNum];
         if(popup.id == "popup_filter_" + column_id){
@@ -717,12 +717,37 @@ function WebColumn(name, title){
     this.checkValueByFilter = function(value){
         if(this.filterValue==undefined) return true;
         if(this.filterValue=="") return true;
-        console.log("checkValueByFilter #" + value + "# - #" + this.filterValue + "#");
+        //console.log("checkValueByFilter #" + value + "# - #" + this.filterValue + "#");
 
+        let filters_array = this.filterValue.trim().split(",");
+        //console.log(filters_array);
         // Check including
-        if(String(value).search(this.filterValue)==-1){
-            return false;
+        for(let filterNum in filters_array){
+            let filter = filters_array[filterNum].trim();
+            
+            //console.log( filter );
+            if(filter[0]==">"){
+                let valueInt = hardParseInt(value, undefined);
+                let filterInt = hardParseInt(filter.substr(1), undefined);
+                //console.log( valueInt + " - " + filterInt)
+                if(valueInt==undefined || filterInt==undefined) return false;
+
+                if(valueInt<=filterInt) return false;
+            }else if(filter[0]=="<"){
+                let valueInt = hardParseInt(value, undefined);
+                let filterInt = hardParseInt(filter.substr(1), undefined);
+                
+                if(valueInt==undefined || filterInt==undefined) return false;
+
+                if(valueInt>=filterInt) return false;
+            }else{
+                if(String(value).search(filter)==-1){
+                    return false;
+                }
+            }
+            
         }
+        
 
         return true;
     }
