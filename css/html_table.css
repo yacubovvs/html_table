@@ -162,6 +162,7 @@
     box-shadow: 0 0 10px black;
     text-align: left;
     padding: 20px 10px;
+    user-select: none;
 }
 
 .WebTable-filter_poup-value{
@@ -169,6 +170,7 @@
     border: solid 1px rgb(114, 114, 114);
     margin-top: 10px;
     border-radius: 3px;
+    user-select: text;
     
 }
 
